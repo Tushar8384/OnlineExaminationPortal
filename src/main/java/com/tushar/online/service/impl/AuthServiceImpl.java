@@ -40,38 +40,38 @@ public class AuthServiceImpl implements AuthService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.STUDENT); // Default role is Student
+
+        // If they send a role in the request, use it. Otherwise, default to STUDENT.
+        if (request.getRole() != null && request.getRole().equalsIgnoreCase("ADMIN")) {
+            user.setRole(Role.ADMIN);
+        } else {
+            user.setRole(Role.STUDENT);
+        }
 
         userRepository.save(user);
 
-        // Generate token immediately (optional, or force them to login)
-        // For this example, we return a success message without a token
-        return new AuthResponse(null, "User registered successfully!");
+        // FIXED: Removed the trailing comma and added the role!
+        return new AuthResponse(null, "User registered successfully!", user.getRole().name());
     }
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        // This will authenticate using the CustomUserDetailsService we created earlier
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        // If authentication passes, load user and generate token
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // We need to convert our User entity to Spring Security's UserDetails
-        // A shortcut is to fetch it again via UserDetailsService or build it manually here.
-        // Since JwtUtil just needs the username (email), we can use a helper or modify JwtUtil.
-        // Let's keep it simple: We need a UserDetails object for JwtUtil.
-        // Re-using the logic from CustomUserDetailsService:
         var userDetails = new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                java.util.Collections.emptyList() // Roles are handled inside JwtUtil generation if needed
+                java.util.Collections.emptyList()
         );
 
         String token = jwtUtil.generateToken(userDetails);
-        return new AuthResponse(token, "Login successful");
+
+        // FIXED: Added user.getRole().name() as the third argument!
+        return new AuthResponse(token, "Login successful", user.getRole().name());
     }
 }

@@ -1,0 +1,22 @@
+/* Reset all default browser margins and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Make sure the body and html take up the full screen */
+body, html {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f4f7f6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Force the React root container to expand fully */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

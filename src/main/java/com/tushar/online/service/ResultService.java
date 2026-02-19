@@ -8,4 +8,5 @@ import java.util.List;
 public interface ResultService {
     ResultResponse submitExam(ExamSubmission submission, String userEmail);
     List<ResultResponse> getMyResults(String userEmail);
+    List<ResultResponse> getResultsByExam(Long examId);
 }

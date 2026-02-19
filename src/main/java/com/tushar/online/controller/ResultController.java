@@ -27,4 +27,8 @@ public class ResultController {
     public ResponseEntity<List<ResultResponse>> getMyHistory(Principal principal) {
         return ResponseEntity.ok(resultService.getMyResults(principal.getName()));
     }
+    @GetMapping("/exam/{examId}")
+    public ResponseEntity<List<ResultResponse>> getExamResultsForAdmin(@PathVariable Long examId) {
+        return ResponseEntity.ok(resultService.getResultsByExam(examId));
+    }
 }

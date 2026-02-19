@@ -31,9 +31,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
+                .cors(org.springframework.security.config.Customizer.withDefaults()) // ADD THIS LINE!
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/swagger-ui/**").permitAll()
+                        // ... the rest of your rules
                         // We allow authenticated users to reach these, and let the Controller decide permissions
                         .requestMatchers("/api/exams/**", "/api/questions/**").authenticated()
                         .anyRequest().authenticated()

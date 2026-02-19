@@ -29,26 +29,40 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader("Authorization");
 
         String username = null;
-        String jwt = null;
+        String token = null; // Removed the confusing 'jwt' variable!
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            // Trim removes accidental spaces
+            token = authHeader.substring(7).trim();
+
+            // If the token is empty or the literal string "undefined", ignore it
+            if (!token.isEmpty() && !token.equals("undefined") && !token.equals("null")) {
+                try {
+                    username = jwtUtil.extractUsername(token);
+                } catch (Exception e) {
+                    System.out.println("Invalid or empty JWT token: " + e.getMessage());
+                    token = null; // Set to null so it doesn't try to validate it later
+                }
+            } else {
+                token = null;
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            // CHANGED 'jwt' to 'token' HERE! Added a null check too.
+            if (token != null && jwtUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         chain.doFilter(request, response);
     }
 }

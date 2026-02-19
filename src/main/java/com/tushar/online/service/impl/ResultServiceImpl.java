@@ -32,45 +32,41 @@ public class ResultServiceImpl implements ResultService {
 
     @Override
     public ResultResponse submitExam(ExamSubmission submission, String userEmail) {
-        // 1. Fetch User and Exam
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Exam exam = examRepository.findById(submission.getExamId())
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
 
-        // 2. Fetch all questions for this exam
-        // (Optimized: fetch all at once instead of one by one in a loop)
         List<Question> questions = questionRepository.findByExamId(submission.getExamId());
 
         int totalQuestions = questions.size();
         int correctCount = 0;
 
-        // 3. Compare Answers
         Map<Long, String> userAnswers = submission.getAnswers();
 
         for (Question q : questions) {
             String selectedOption = userAnswers.get(q.getId());
-            // Check if selected option matches correct option (Case insensitive safety)
             if (selectedOption != null && selectedOption.equalsIgnoreCase(q.getCorrectOption())) {
                 correctCount++;
             }
         }
 
-        // 4. Save Result
         Result result = new Result(user, exam, totalQuestions, correctCount);
-        resultRepository.save(result);
+        result = resultRepository.save(result);
 
-        // 5. Return Response
         String message = (result.getScorePercentage() >= 50) ? "Congratulations! You Passed." : "Better luck next time.";
 
+        // FIXED: Added the student's name and email to the response!
         return new ResultResponse(
                 result.getId(),
                 exam.getTitle(),
                 totalQuestions,
                 correctCount,
                 result.getScorePercentage(),
-                message
+                message,
+                user.getFirstName() + " " + user.getLastName(),
+                user.getEmail()
         );
     }
 
@@ -86,7 +82,26 @@ public class ResultServiceImpl implements ResultService {
                         r.getTotalQuestions(),
                         r.getCorrectAnswers(),
                         r.getScorePercentage(),
-                        r.getScorePercentage() >= 50 ? "Passed" : "Failed"
+                        r.getScorePercentage() >= 50 ? "Passed" : "Failed",
+                        user.getFirstName() + " " + user.getLastName(),
+                        user.getEmail()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // NEW: The Admin Method to get everyone's scores!
+    @Override
+    public List<ResultResponse> getResultsByExam(Long examId) {
+        return resultRepository.findByExamId(examId).stream()
+                .map(r -> new ResultResponse(
+                        r.getId(),
+                        r.getExam().getTitle(),
+                        r.getTotalQuestions(),
+                        r.getCorrectAnswers(),
+                        r.getScorePercentage(),
+                        r.getScorePercentage() >= 50 ? "Passed" : "Failed",
+                        r.getUser().getFirstName() + " " + r.getUser().getLastName(),
+                        r.getUser().getEmail()
                 ))
                 .collect(Collectors.toList());
     }

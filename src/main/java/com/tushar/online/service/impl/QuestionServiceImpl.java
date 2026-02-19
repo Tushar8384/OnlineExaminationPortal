@@ -42,9 +42,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionResponse> getQuestionsByExamId(Long examId) {
-        // Assuming you added a method in QuestionRepository: List<Question> findByExamId(Long examId);
-        // If not, add it to the interface now.
-        return questionRepository.findByExamId(examId).stream()
+        List<Question> questions = questionRepository.findByExamId(examId);
+
+        return questions.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -54,14 +54,22 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.deleteById(id);
     }
 
-    private QuestionResponse mapToResponse(Question question) {
+    // ==========================================
+    // 🛠️ HELPER METHOD: Converts Database Entity to DTO
+    // ==========================================
+    private QuestionResponse mapToResponse(Question q) {
         QuestionResponse response = new QuestionResponse();
-        response.setId(question.getId());
-        response.setContent(question.getContent());
-        response.setOptionA(question.getOptionA());
-        response.setOptionB(question.getOptionB());
-        response.setOptionC(question.getOptionC());
-        response.setOptionD(question.getOptionD());
+        response.setId(q.getId());
+        response.setContent(q.getContent());
+        response.setOptionA(q.getOptionA());
+        response.setOptionB(q.getOptionB());
+        response.setOptionC(q.getOptionC());
+        response.setOptionD(q.getOptionD());
+
+        // 🔥 THIS IS THE MAGIC LINE THAT FIXES YOUR REACT APP 🔥
+        // It finally hands the correct answer over to the frontend!
+        response.setCorrectOption(q.getCorrectOption());
+
         return response;
     }
 }

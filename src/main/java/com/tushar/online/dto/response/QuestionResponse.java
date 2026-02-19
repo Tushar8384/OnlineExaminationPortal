@@ -10,5 +10,7 @@ public class QuestionResponse {
     private String optionB;
     private String optionC;
     private String optionD;
-    // Note: We usually DON'T send the 'correctOption' in the response to the student!
+
+    // We NEED to send this now so the React frontend can show the Review screen!
+    private String correctOption;
 }
