@@ -72,6 +72,6 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtUtil.generateToken(userDetails);
 
         // FIXED: Added user.getRole().name() as the third argument!
-        return new AuthResponse(token, "Login successful", user.getRole().name());
+        return new AuthResponse(token, "Login successfully", user.getRole().name());
     }
 }
