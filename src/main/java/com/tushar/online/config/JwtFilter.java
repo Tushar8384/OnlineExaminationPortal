@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
             token = authHeader.substring(7).trim();
 
             // If the token is empty or the literal string "undefined", ignore it
-            if (!token.isEmpty() && !token.equals("undefined") && !token.equals("null")) {
+            if (!token.isEmpty() && !token.equals("undfined") && !token.equals("null")) {
                 try {
                     username = jwtUtil.extractUsername(token);
                 } catch (Exception e) {
