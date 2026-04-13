@@ -24,6 +24,9 @@ public class ExamServiceImpl implements ExamService {
         exam.setDescription(request.getDescription());
         exam.setMaxMarks(request.getMaxMarks());
         exam.setDurationMinutes(request.getDurationMinutes());
+        exam.setDifficulty(request.getDifficulty());
+        exam.setCategory(request.getCategory());
+        exam.setInstructions(request.getInstructions());
         exam.setActive(true);
 
         Exam savedExam = examRepository.save(exam);
@@ -60,6 +63,9 @@ public class ExamServiceImpl implements ExamService {
         response.setDescription(exam.getDescription());
         response.setMaxMarks(exam.getMaxMarks());
         response.setDurationMinutes(exam.getDurationMinutes());
+        response.setDifficulty(exam.getDifficulty());
+        response.setCategory(exam.getCategory());
+        response.setInstructions(exam.getInstructions());
         response.setActive(exam.isActive());
         return response;
     }

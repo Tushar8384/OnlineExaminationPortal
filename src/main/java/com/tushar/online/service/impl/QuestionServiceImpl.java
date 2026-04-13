@@ -41,9 +41,28 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public QuestionResponse updateQuestion(Long id, QuestionRequest request) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+
+        Exam exam = examRepository.findById(request.getExamId())
+                .orElseThrow(() -> new RuntimeException("Exam not found"));
+
+        question.setContent(request.getContent());
+        question.setOptionA(request.getOptionA());
+        question.setOptionB(request.getOptionB());
+        question.setOptionC(request.getOptionC());
+        question.setOptionD(request.getOptionD());
+        question.setCorrectOption(request.getCorrectOption());
+        question.setExam(exam);
+
+        Question updatedQuestion = questionRepository.save(question);
+        return mapToResponse(updatedQuestion);
+    }
+
+    @Override
     public List<QuestionResponse> getQuestionsByExamId(Long examId) {
         List<Question> questions = questionRepository.findByExamId(examId);
-
         return questions.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -54,9 +73,6 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.deleteById(id);
     }
 
-    // ==========================================
-    // 🛠️ HELPER METHOD: Converts Database Entity to DTO
-    // ==========================================
     private QuestionResponse mapToResponse(Question q) {
         QuestionResponse response = new QuestionResponse();
         response.setId(q.getId());
@@ -65,11 +81,7 @@ public class QuestionServiceImpl implements QuestionService {
         response.setOptionB(q.getOptionB());
         response.setOptionC(q.getOptionC());
         response.setOptionD(q.getOptionD());
-
-        // 🔥 THIS IS THE MAGIC LINE THAT FIXES YOUR REACT APP 🔥
-        // It finally hands the correct answer over to the frontend!
         response.setCorrectOption(q.getCorrectOption());
-
         return response;
     }
 }

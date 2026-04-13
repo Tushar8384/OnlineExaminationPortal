@@ -23,6 +23,12 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.addQuestion(request));
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<QuestionResponse> updateQuestion(@PathVariable Long id, @RequestBody QuestionRequest request) {
+        return ResponseEntity.ok(questionService.updateQuestion(id, request));
+    }
+
     @GetMapping("/exam/{examId}")
     public ResponseEntity<List<QuestionResponse>> getQuestionsByExam(@PathVariable Long examId) {
         return ResponseEntity.ok(questionService.getQuestionsByExamId(examId));

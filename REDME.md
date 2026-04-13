@@ -36,7 +36,7 @@ A robust RESTful API for an Online Examination System built with **Spring Boot 3
 2.  **Configure Database:**
     Update `src/main/resources/application.properties`:
     ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/online_exam_db
+    spring.datasource.url=jdbc:mysql://localhost:3306/exam
     spring.datasource.username=root
     spring.datasource.password=your_password
     spring.jpa.hibernate.ddl-auto=update
@@ -69,6 +69,7 @@ A robust RESTful API for an Online Examination System built with **Spring Boot 3
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/questions` | Add a question to an exam | Admin |
+| `PUT` | `/api/questions/{id}` | Update a question | Admin |
 | `GET` | `/api/questions/exam/{id}` | Get questions for an exam | Admin, Student |
 | `DELETE` | `/api/questions/{id}` | Delete a question | Admin |
 
@@ -77,15 +78,17 @@ A robust RESTful API for an Online Examination System built with **Spring Boot 3
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/results/submit` | Submit answers & get score | Student |
 | `GET` | `/api/results/history` | View past results | Student |
+| `GET` | `/api/results/exam/{id}` | View all student results for exam | Admin |
 
 ---
 
 ## 🧪 Testing Guide (Postman)
 
 ### Step 1: Create an Admin
-Since the registration endpoint defaults to `STUDENT`, you must manually update the role in the database for your first Admin.
+Registration creates `STUDENT` users by default.
 1. Register a user via `/api/auth/register`.
-2. Run SQL: `UPDATE users SET role = 'ADMIN' WHERE email = 'your_email';`
+2. Promote admin manually using SQL:
+`UPDATE users SET role = 'ADMIN' WHERE email = 'your_email';`
 
 ### Step 2: Get Token
 1. Login via `/api/auth/login`.

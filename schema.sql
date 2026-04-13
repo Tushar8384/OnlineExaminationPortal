@@ -1,46 +1,47 @@
--- Database creation
-CREATE DATABASE IF NOT EXISTS online_exam;
-USE online_exam;
+CREATE DATABASE IF NOT EXISTS exam;
+USE exam;
 
--- Create Users Table
-CREATE TABLE users (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       firstName VARCHAR(255) NOT NULL,
-                       lastName VARCHAR(255) null ,
-                       email VARCHAR(255) UNIQUE NOT NULL,
-                       password VARCHAR(255) NOT NULL,
-                       role VARCHAR(50) DEFAULT 'STUDENT'
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20)
 );
 
--- Create Exams Table
-CREATE TABLE exams (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       title VARCHAR(255) NOT NULL,
-                       description TEXT,
-                       duration_minutes INT NOT NULL
+CREATE TABLE IF NOT EXISTS exams (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    description VARCHAR(255),
+    max_marks INT,
+    duration_minutes INT,
+    difficulty VARCHAR(50),
+    category VARCHAR(100),
+    instructions VARCHAR(2000),
+    is_active BIT(1) NOT NULL DEFAULT b'1'
 );
 
--- Create Questions Table
-CREATE TABLE questions (
-                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                           exam_id BIGINT,
-                           content TEXT NOT NULL,
-                           option_a VARCHAR(255) NOT NULL,
-                           option_b VARCHAR(255) NOT NULL,
-                           option_c VARCHAR(255) NOT NULL,
-                           option_d VARCHAR(255) NOT NULL,
-                           correct_option VARCHAR(10) NOT NULL,
-                           FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS questions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    content VARCHAR(255),
+    optiona VARCHAR(255),
+    optionb VARCHAR(255),
+    optionc VARCHAR(255),
+    optiond VARCHAR(255),
+    correct_option VARCHAR(255),
+    exam_id BIGINT,
+    CONSTRAINT fk_questions_exam FOREIGN KEY (exam_id) REFERENCES exams(id)
 );
 
--- Create Results Table
-CREATE TABLE results (
-                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         exam_id BIGINT,
-                         student_name VARCHAR(255) NOT NULL,
-                         student_email VARCHAR(255) NOT NULL,
-                         correct_answers INT NOT NULL,
-                         total_questions INT NOT NULL,
-                         score_percentage DOUBLE NOT NULL,
-                         FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS results (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    total_questions INT,
+    correct_answers INT,
+    score_percentage DOUBLE,
+    submission_date DATETIME(6),
+    exam_id BIGINT,
+    user_id BIGINT,
+    CONSTRAINT fk_results_exam FOREIGN KEY (exam_id) REFERENCES exams(id),
+    CONSTRAINT fk_results_user FOREIGN KEY (user_id) REFERENCES users(id)
 );

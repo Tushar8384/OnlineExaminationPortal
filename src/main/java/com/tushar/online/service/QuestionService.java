@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface QuestionService {
     QuestionResponse addQuestion(QuestionRequest request);
+    QuestionResponse updateQuestion(Long id, QuestionRequest request);
     List<QuestionResponse> getQuestionsByExamId(Long examId);
     void deleteQuestion(Long id);
 }

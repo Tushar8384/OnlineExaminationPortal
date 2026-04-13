@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    // Prefer env-configured URL; fallback matches current backend default run port.
+    baseURL: configuredBaseUrl || 'http://localhost:8081/api',
+    timeout: 10000,
 });
 
 // This automatically attaches your JWT token to every request after you log in

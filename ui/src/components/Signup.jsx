@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, {useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import api from '../services/api';
 
 function Signup() {
@@ -485,21 +485,26 @@ function Signup() {
 
                         {/* Role Selection */}
                         <div style={styles.inputGroup}>
-                            <label style={styles.label}>I am a</label>
+                            <label style={styles.label}>Role</label>
                             <select
                                 name="role"
                                 value={formData.role}
                                 onChange={handleChange}
                                 onFocus={() => setFocusedField('role')}
                                 onBlur={() => setFocusedField(null)}
+                                disabled
                                 style={{
                                     ...styles.select,
-                                    ...(focusedField === 'role' ? styles.inputFocused : {})
+                                    ...(focusedField === 'role' ? styles.inputFocused : {}),
+                                    backgroundColor: '#f8fafc',
+                                    cursor: 'not-allowed'
                                 }}
                             >
                                 <option value="STUDENT">🎓 Student</option>
-                                <option value="ADMIN">👨‍🏫 Teacher/Admin</option>
                             </select>
+                            <span style={{ fontSize: '12px', color: '#64748b' }}>
+                                New registrations are created as STUDENT.
+                            </span>
                         </div>
 
                         {/* Submit Button */}

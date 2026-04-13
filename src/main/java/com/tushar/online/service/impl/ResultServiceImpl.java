@@ -39,6 +39,9 @@ public class ResultServiceImpl implements ResultService {
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
 
         List<Question> questions = questionRepository.findByExamId(submission.getExamId());
+        if (questions.isEmpty()) {
+            throw new RuntimeException("This exam has no questions configured yet.");
+        }
 
         int totalQuestions = questions.size();
         int correctCount = 0;
@@ -57,7 +60,6 @@ public class ResultServiceImpl implements ResultService {
 
         String message = (result.getScorePercentage() >= 50) ? "Congratulations! You Passed." : "Better luck next time.";
 
-        // FIXED: Added the student's name and email to the response!
         return new ResultResponse(
                 result.getId(),
                 exam.getTitle(),

@@ -15,9 +15,10 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow your React app to connect
+        // Allow local frontend dev servers (Vite may switch 5173/5174/...).
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOriginPattern("http://localhost:*");
+        config.addAllowedOriginPattern("http://127.0.0.1:*");
 
         // Allow all headers and methods (GET, POST, PUT, DELETE, OPTIONS)
         config.addAllowedHeader("*");
